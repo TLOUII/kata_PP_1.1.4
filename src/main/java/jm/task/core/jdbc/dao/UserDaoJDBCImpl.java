@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
-    private List<User> userList = new ArrayList<>();
+    private final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
+    private  List<User> userList = new ArrayList<>();
 
     public UserDaoJDBCImpl() {
 
@@ -35,9 +35,8 @@ public class UserDaoJDBCImpl implements UserDao {
     } // Создание таблиц
 
     public void dropUsersTable() {
-        String sql = "DROP TABLE users";
         try (Statement statement = Util.getConnection().createStatement()) {
-            statement.executeUpdate(sql);
+            statement.executeUpdate("DROP TABLE users");
             Util.closeConnection();
         } catch (SQLException e) {
             logger.warning("Ошибка в методе dropUserTable ");
@@ -46,8 +45,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String sql = " INSERT INTO kata_pp.users (name,last_name,age) VALUES (?, ?, ? )";
-        try (PreparedStatement prepState = Util.getConnection().prepareStatement(sql);) {
+        try (PreparedStatement prepState = Util.getConnection().prepareStatement(" INSERT INTO kata_pp.users (name,last_name,age) VALUES (?, ?, ? )")) {
             prepState.setString(1, name);
             prepState.setString(2, lastName);
             prepState.setByte(3, age);
@@ -61,8 +59,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        String sql = " DELETE FROM users WHERE id = (?);";
-        try (PreparedStatement prepState = Util.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement prepState = Util.getConnection().prepareStatement(" DELETE FROM users WHERE id = (?);")) {
             prepState.setLong(1, id);
             prepState.execute();
             Util.closeConnection();
@@ -72,9 +69,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
-        String sql1 = "SELECT * FROM kata_pp.users";
         try (Statement stmt = Util.getConnection().createStatement();
-             ResultSet rSet = stmt.executeQuery(sql1)) {
+             ResultSet rSet = stmt.executeQuery("SELECT * FROM kata_pp.users")) {
             while (rSet.next()) {
                 long id = rSet.getLong(1);
                 String name = rSet.getString(2);
@@ -92,9 +88,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        String sql = "DELETE FROM kata_pp.users ";
         try (Statement statement = Util.getConnection().createStatement()) {
-            statement.executeUpdate(sql);
+            statement.executeUpdate("DELETE FROM kata_pp.users ");
             logger.fine("Table is cleaned");
             Util.closeConnection();
         } catch (SQLException e) {
